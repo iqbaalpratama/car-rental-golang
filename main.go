@@ -2,6 +2,7 @@ package main
 
 import (
 	"car-rental/database"
+	"car-rental/route"
 	"database/sql"
 	"fmt"
 	"os"
@@ -34,10 +35,6 @@ func main() {
 	}
 	database.DbMigrate(DB)
 	defer DB.Close()
-	// router := gin.Default()
-	// router.GET("/persons", controllers.GetAllPerson)
-	// router.POST("/persons", controllers.InsertPerson)
-	// router.PUT("/persons/:id", controllers.UpdatePerson)
-	// router.DELETE("/persons/:id", controllers.DeletePerson)
-	// router.Run()
+	router := route.Route()
+	router.Run("localhost:8080")
 }
