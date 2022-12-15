@@ -21,3 +21,8 @@ type PostPutAdmin struct {
 	Password    string `json:"password"`
 	PhoneNumber string `json:"phone_number"`
 }
+
+type AdminLogin struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

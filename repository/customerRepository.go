@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"car-rental/helper"
 	"car-rental/model"
 	"database/sql"
 	"errors"
@@ -51,4 +52,22 @@ func DeleteCustomer(db *sql.DB, customer model.Customer) (err error) {
 		return errors.New("Failed to delete data because customer data is not found")
 	}
 	return nil
+}
+
+func LoginCheckCustomer(db *sql.DB, input model.AuthLogin) (string, error) {
+	var id int
+	var password string
+	sql := "SELECT id, password FROM customers WHERE email = $1"
+	if err := db.QueryRow(sql, input.Email).Scan(&id, &password); err != nil {
+		return "", errors.New("Email not found")
+	}
+	if !helper.CheckPasswordHash(input.Password, password) {
+		return "", errors.New("Password not match with email")
+	}
+	data := model.Token{ID: id, Role: "Customer"}
+	token, err := helper.GenerateToken(data)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }

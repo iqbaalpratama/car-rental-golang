@@ -2,14 +2,20 @@ package route
 
 import (
 	"car-rental/controllers"
+	"car-rental/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func Route() *gin.Engine {
 	router := gin.Default()
+
+	//Auth
+	router.POST("/admins/login", controllers.AuthLoginAdmin)
+	router.POST("/customers/login", controllers.AuthLoginCustomer)
+
 	//Admin
-	router.GET("/admins", controllers.GetAllAdmin)
+	router.GET("/admins", middleware.JwtAuthMiddleware(), controllers.GetAllAdmin)
 	router.POST("/admins", controllers.InsertAdmin)
 	// router.PUT("/persons/:id", controllers.UpdatePerson)
 	router.DELETE("/admins/:id", controllers.DeleteAdmin)

@@ -21,3 +21,8 @@ type PostCustomer struct {
 	Address     string `json:"address"`
 	PhoneNumber string `json:"phone_number"`
 }
+
+type CustomerLogin struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

@@ -3,6 +3,7 @@ module car-rental
 go 1.18
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.8.1 // indirect
 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
