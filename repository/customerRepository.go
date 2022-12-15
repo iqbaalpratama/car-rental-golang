@@ -3,21 +3,22 @@ package repository
 import (
 	"car-rental/model"
 	"database/sql"
+	"errors"
 	"time"
 )
 
-func GetAllCustomer(db *sql.DB) (err error, results []model.Customer) {
+func GetAllCustomer(db *sql.DB) (results []model.Customer, err error) {
 	sql := "SELECT id, first_name, last_name, email, address, phone_number, created_at, updated_at FROM customers"
 	rows, err := db.Query(sql)
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 	defer rows.Close()
 	for rows.Next() {
 		var customer = model.Customer{}
 		err := rows.Scan(&customer.ID, &customer.FirstName, &customer.LastName, &customer.Email, &customer.Address, &customer.PhoneNumber, &customer.CreatedAt, &customer.UpdatedAt)
 		if err != nil {
-			return err, nil
+			return nil, err
 		}
 		results = append(results, customer)
 	}
@@ -36,8 +37,18 @@ func InsertCustomer(db *sql.DB, admin model.PostCustomer) (err error) {
 // 	return errs.Err()
 // }
 
-func DeleteCustomer(db *sql.DB, admin model.Customer) (err error) {
+func DeleteCustomer(db *sql.DB, customer model.Customer) (err error) {
 	sql := "DELETE from customers WHERE id = $1"
-	errs := db.QueryRow(sql, admin.ID)
-	return errs.Err()
+	res, err := db.Exec(sql, customer.ID)
+	if err != nil {
+		return err
+	}
+	count, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return errors.New("Failed to delete data because customer data is not found")
+	}
+	return nil
 }

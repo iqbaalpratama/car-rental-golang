@@ -15,7 +15,7 @@ type Car struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-type PostCar struct {
+type PostPutCar struct {
 	CarNumber string `json:"car_number"`
 	CarModel  string `json:"car_model"`
 	CarYear   int    `json:"car_year"`

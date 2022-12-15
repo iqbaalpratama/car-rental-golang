@@ -6,6 +6,7 @@ import (
 	"car-rental/repository"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,11 +29,13 @@ func GetAllBrand(c *gin.Context) {
 }
 
 func InsertBrand(c *gin.Context) {
-	var brand model.PostPutBrand
+	var brand model.Brand
 	err := c.ShouldBindJSON(&brand)
 	if err != nil {
 		panic(err)
 	}
+	brand.CreatedAt = time.Now().Local()
+	brand.UpdatedAt = time.Now().Local()
 	err = repository.InsertBrand(database.DbConnection, brand)
 	if err != nil {
 		panic(err)
@@ -42,22 +45,29 @@ func InsertBrand(c *gin.Context) {
 	})
 }
 
-// func UpdatePerson(c *gin.Context) {
-// 	var person model.Person
-// 	id, _ := strconv.Atoi(c.Param("id"))
-// 	err := c.ShouldBindJSON(&person)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	person.ID = int64(id)
-// 	err = repository.UpdatePerson(database.DbConnection, person)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"result": "Success Update Person",
-// 	})
-// }
+func UpdateBrand(c *gin.Context) {
+	var brand model.Brand
+	brandId, _ := strconv.Atoi(c.Param("id"))
+	err := c.ShouldBindJSON(&brand)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	brand.ID = brandId
+	brand.UpdatedAt = time.Now().Local()
+	err = repository.UpdateBrand(database.DbConnection, brand)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"result": "Success Update Brand",
+	})
+}
 
 func DeleteBrand(c *gin.Context) {
 	var brand model.Brand
@@ -65,7 +75,10 @@ func DeleteBrand(c *gin.Context) {
 	brand.ID = id
 	err = repository.DeleteBrand(database.DbConnection, brand)
 	if err != nil {
-		panic(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"result": "Success Delete Brand",

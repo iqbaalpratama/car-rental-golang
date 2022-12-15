@@ -5,7 +5,6 @@ import (
 	"car-rental/helper"
 	"car-rental/model"
 	"car-rental/repository"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -30,21 +29,50 @@ func GetAllAdmin(c *gin.Context) {
 }
 
 func InsertAdmin(c *gin.Context) {
-	var admin model.PostAdmin
+	var errorValidation []string
+	var admin model.PostPutAdmin
 	err := c.ShouldBindJSON(&admin)
 	if err != nil {
-		panic(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
 	}
-	password, errPassword := helper.HashPassword(admin.Password)
-	fmt.Println(password)
-	if errPassword != nil {
-		panic(errPassword)
+
+	if !helper.IsLengthPasswordValid(admin.Password) {
+		errorValidation = append(errorValidation, "Password length is not valid, it should contain minimum 6 characters")
+	}
+	if !helper.IsEmailValid(admin.Email) {
+		errorValidation = append(errorValidation, "Email input is not valid")
+	}
+	if !helper.IsLengthPhoneNumberValid(admin.PhoneNumber) {
+		errorValidation = append(errorValidation, "Phone number length is not valid, it should be between 11 and 14 characters length")
+	}
+	if len(errorValidation) > 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error_status":  "Input data is not valid",
+			"error_message": errorValidation,
+		})
+		return
+	}
+
+	password, err := helper.HashPassword(admin.Password)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
 	}
 	admin.Password = password
+
 	err = repository.InsertAdmin(database.DbConnection, admin)
 	if err != nil {
-		panic(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"result": "Success Insert Admin",
 	})
@@ -73,7 +101,10 @@ func DeleteAdmin(c *gin.Context) {
 	admin.ID = id
 	err = repository.DeleteAdmin(database.DbConnection, admin)
 	if err != nil {
-		panic(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"result": "Success Delete Admin",

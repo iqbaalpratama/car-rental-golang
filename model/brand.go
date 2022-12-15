@@ -9,6 +9,6 @@ type Brand struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-type PostPutBrand struct {
-	Name string `json:"name"`
-}
+// type PostPutBrand struct {
+// 	Name string `json:"name"`
+// }
