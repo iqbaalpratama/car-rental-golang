@@ -44,17 +44,27 @@ func GetAllAdmin(db *sql.DB) (results []model.Admin, err error) {
 // 	return
 // }
 
-func InsertAdmin(db *sql.DB, admin model.PostPutAdmin) (err error) {
+func InsertAdmin(db *sql.DB, admin model.PostAdmin) (err error) {
 	sql := "INSERT INTO admins (first_name, last_name, email, password, phone_number, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)"
 	errs := db.QueryRow(sql, admin.FirstName, admin.LastName, admin.Email, admin.Password, admin.PhoneNumber, time.Now().Local(), time.Now().Local())
 	return errs.Err()
 }
 
-// func UpdatePerson(db *sql.DB, person model.Admin) (err error) {
-// 	sql := "UPDATE person SET first_name = $1, last_name = $2 WHERE id = $3"
-// 	errs := db.QueryRow(sql, person.FirstName, person.LastName, person.ID)
-// 	return errs.Err()
-// }
+func UpdateAdmin(db *sql.DB, admin model.PutAdmin, adminId int) (err error) {
+	sql := "UPDATE admins SET first_name = $1, last_name = $2, phone_number = $3, updated_at = $4 WHERE id = $5;"
+	res, err := db.Exec(sql, admin.FirstName, admin.LastName, admin.PhoneNumber, time.Now().Local(), adminId)
+	if err != nil {
+		return err
+	}
+	count, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return errors.New("Failed to update data because admin data is not found")
+	}
+	return nil
+}
 
 func DeleteAdmin(db *sql.DB, admin model.Admin) (err error) {
 	sql := "DELETE from admins WHERE id = $1;"

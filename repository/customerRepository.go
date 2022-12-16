@@ -32,11 +32,21 @@ func InsertCustomer(db *sql.DB, admin model.PostCustomer) (err error) {
 	return errs.Err()
 }
 
-// func UpdatePerson(db *sql.DB, person model.Admin) (err error) {
-// 	sql := "UPDATE person SET first_name = $1, last_name = $2 WHERE id = $3"
-// 	errs := db.QueryRow(sql, person.FirstName, person.LastName, person.ID)
-// 	return errs.Err()
-// }
+func UpdateCustomer(db *sql.DB, customer model.PutCustomer, customerId int) (err error) {
+	sql := "UPDATE customers SET first_name = $1, last_name = $2, address = $3, phone_number = $4, updated_at = $5 WHERE id = $6;"
+	res, err := db.Exec(sql, customer.FirstName, customer.LastName, customer.Address, customer.PhoneNumber, time.Now().Local(), customerId)
+	if err != nil {
+		return err
+	}
+	count, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return errors.New("Failed to update data because customer data is not found")
+	}
+	return nil
+}
 
 func DeleteCustomer(db *sql.DB, customer model.Customer) (err error) {
 	sql := "DELETE from customers WHERE id = $1"

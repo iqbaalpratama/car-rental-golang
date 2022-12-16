@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"car-rental/database"
+	"car-rental/helper"
 	"car-rental/model"
 	"car-rental/repository"
 	"net/http"
@@ -29,8 +30,27 @@ func GetAllBrand(c *gin.Context) {
 }
 
 func InsertBrand(c *gin.Context) {
+	dataUser, err := helper.ExtractTokenData(c)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	if dataUser == (model.Token{}) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "Cannot extract data token",
+		})
+		return
+	}
+	if dataUser.Role == "Customer" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "You are unauthorized to access this resource, this resource for admin user",
+		})
+		return
+	}
 	var brand model.Brand
-	err := c.ShouldBindJSON(&brand)
+	err = c.ShouldBindJSON(&brand)
 	if err != nil {
 		panic(err)
 	}
@@ -46,9 +66,28 @@ func InsertBrand(c *gin.Context) {
 }
 
 func UpdateBrand(c *gin.Context) {
+	dataUser, err := helper.ExtractTokenData(c)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	if dataUser == (model.Token{}) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "Cannot extract data token",
+		})
+		return
+	}
+	if dataUser.Role == "Customer" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "You are unauthorized to access this resource, this resource for admin user",
+		})
+		return
+	}
 	var brand model.Brand
 	brandId, _ := strconv.Atoi(c.Param("id"))
-	err := c.ShouldBindJSON(&brand)
+	err = c.ShouldBindJSON(&brand)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -70,6 +109,25 @@ func UpdateBrand(c *gin.Context) {
 }
 
 func DeleteBrand(c *gin.Context) {
+	dataUser, err := helper.ExtractTokenData(c)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	if dataUser == (model.Token{}) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "Cannot extract data token",
+		})
+		return
+	}
+	if dataUser.Role == "Customer" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "You are unauthorized to access this resource, this resource for admin user",
+		})
+		return
+	}
 	var brand model.Brand
 	id, err := strconv.Atoi(c.Param("id"))
 	brand.ID = id

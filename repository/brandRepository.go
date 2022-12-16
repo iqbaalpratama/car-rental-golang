@@ -41,7 +41,7 @@ func UpdateBrand(db *sql.DB, brand model.Brand) (err error) {
 		return err
 	}
 	if count == 0 {
-		return errors.New("Failed to delete data because brand data is not found")
+		return errors.New("Failed to update data because brand data is not found")
 	}
 	return nil
 }

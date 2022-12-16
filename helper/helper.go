@@ -56,6 +56,35 @@ func IsUrlValid(imageUrl string) bool {
 	return err == nil && u.Scheme != "" && u.Host != ""
 }
 
+func IsDateValid(dateStart string, dateFinish string) (bool, int) {
+	res1 := strings.Split(dateStart, "/")
+	res2 := strings.Split(dateFinish, "/")
+	year1, _ := strconv.Atoi(res1[0])
+	year2, _ := strconv.Atoi(res2[0])
+	month1, _ := strconv.Atoi(res1[1])
+	month2, _ := strconv.Atoi(res2[1])
+	day1, _ := strconv.Atoi(res1[2])
+	day2, _ := strconv.Atoi(res2[2])
+	t1 := Date(year1, month1, day1)
+	t2 := Date(year2, month2, day2)
+	days := t2.Sub(t1).Hours() / 24
+	if days <= 0 {
+		return false, 0
+	}
+	return true, int(days)
+}
+
+func IsRatingValid(rating int) bool {
+	if rating <= 0 || rating > 10 {
+		return false
+	}
+	return true
+}
+
+func Date(year, month, day int) time.Time {
+	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
+}
+
 func GenerateToken(data model.Token) (string, error) {
 
 	token_lifespan, err := strconv.Atoi(os.Getenv("TOKEN_HOUR_LIFESPAN"))

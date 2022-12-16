@@ -62,3 +62,13 @@ func DeleteCar(db *sql.DB, car model.Car) (err error) {
 	}
 	return nil
 }
+
+func GetCarPrice(db *sql.DB, id int) (int, error) {
+	var price int
+	sqlStatement := `SELECT rent_price from cars where id = $1`
+	// Query for a value based on a single row.
+	if err := db.QueryRow(sqlStatement, id).Scan(&price); err != nil {
+		return 0, errors.New("Car with that ID is not found in database")
+	}
+	return price, nil
+}

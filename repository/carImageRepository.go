@@ -4,7 +4,6 @@ import (
 	"car-rental/model"
 	"database/sql"
 	"errors"
-	"time"
 )
 
 func GetCarImagesByCarId(db *sql.DB, carImage model.CarImage) (results []model.CarImage, err error) {
@@ -27,8 +26,8 @@ func GetCarImagesByCarId(db *sql.DB, carImage model.CarImage) (results []model.C
 }
 
 func InsertCarImage(db *sql.DB, carImage model.CarImage) (err error) {
-	sql := "INSERT INTO car_images(url_image, car_id, created_at, updated_at) VALUES ($1, $2, $3, $4)"
-	errs := db.QueryRow(sql, carImage.ImageURL, carImage.CarId, time.Now().Local(), time.Now().Local())
+	sql := "INSERT INTO car_images(image_url, car_id, created_at, updated_at) VALUES ($1, $2, $3, $4)"
+	errs := db.QueryRow(sql, carImage.ImageURL, carImage.CarId, carImage.CreatedAt, carImage.UpdatedAt)
 	return errs.Err()
 }
 

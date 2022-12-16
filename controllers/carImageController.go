@@ -33,9 +33,28 @@ func GetCarImageByCarId(c *gin.Context) {
 }
 
 func InsertCarImage(c *gin.Context) {
+	dataUser, err := helper.ExtractTokenData(c)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	if dataUser == (model.Token{}) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "Cannot extract data token",
+		})
+		return
+	}
+	if dataUser.Role == "Customer" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "You are unauthorized to access this resource, this resource for admin user",
+		})
+		return
+	}
 	var carImage model.CarImage
 	var errorValidation []string
-	err := c.ShouldBindJSON(&carImage)
+	err = c.ShouldBindJSON(&carImage)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -67,10 +86,29 @@ func InsertCarImage(c *gin.Context) {
 }
 
 func UpdateCarImage(c *gin.Context) {
+	dataUser, err := helper.ExtractTokenData(c)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	if dataUser == (model.Token{}) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "Cannot extract data token",
+		})
+		return
+	}
+	if dataUser.Role == "Customer" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "You are unauthorized to access this resource, this resource for admin user",
+		})
+		return
+	}
 	var carImage model.CarImage
 	var errorValidation []string
 	carImageId, _ := strconv.Atoi(c.Param("id"))
-	err := c.ShouldBindJSON(&carImage)
+	err = c.ShouldBindJSON(&carImage)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -102,6 +140,25 @@ func UpdateCarImage(c *gin.Context) {
 }
 
 func DeleteCarImage(c *gin.Context) {
+	dataUser, err := helper.ExtractTokenData(c)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	if dataUser == (model.Token{}) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "Cannot extract data token",
+		})
+		return
+	}
+	if dataUser.Role == "Customer" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "You are unauthorized to access this resource, this resource for admin user",
+		})
+		return
+	}
 	var carImage model.CarImage
 	id, err := strconv.Atoi(c.Param("id"))
 	carImage.ID = id

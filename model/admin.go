@@ -14,11 +14,17 @@ type Admin struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-type PostPutAdmin struct {
+type PostAdmin struct {
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`
 	Email       string `json:"email"`
 	Password    string `json:"password"`
+	PhoneNumber string `json:"phone_number"`
+}
+
+type PutAdmin struct {
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
 	PhoneNumber string `json:"phone_number"`
 }
 

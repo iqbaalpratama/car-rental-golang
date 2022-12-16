@@ -19,12 +19,12 @@ type Transaction struct {
 type PostTransaction struct {
 	DateStart  string `json:"date_start"`
 	DateFinish string `json:"date_finish"`
+	TotalPrice int    `json:"total_price"`
 	CarId      int    `json:"car_id"`
 	CustomerId int    `json:"customer_id"`
 }
 
 type PostReviewTransaction struct {
-	TransactionId int `json:"transaction_id"`
-	Rating        int `json:"rating"`
-	Review        int `json:"review"`
+	Rating int `json:"rating"`
+	Review int `json:"review"`
 }

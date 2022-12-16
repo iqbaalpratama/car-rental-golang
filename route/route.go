@@ -17,30 +17,42 @@ func Route() *gin.Engine {
 	//Admin
 	router.GET("/admins", middleware.JwtAuthMiddleware(), controllers.GetAllAdmin)
 	router.POST("/admins", controllers.InsertAdmin)
-	// router.PUT("/persons/:id", controllers.UpdatePerson)
-	router.DELETE("/admins/:id", controllers.DeleteAdmin)
+	router.PUT("/admins/:id", middleware.JwtAuthMiddleware(), controllers.UpdateAdmin)
+	router.DELETE("/admins/:id", middleware.JwtAuthMiddleware(), controllers.DeleteAdmin)
 
 	//Customer
-	router.GET("/customers", controllers.GetAllCustomer)
+	router.GET("/customers", middleware.JwtAuthMiddleware(), controllers.GetAllCustomer)
 	router.POST("/customers", controllers.InsertCustomer)
-	// router.PUT("/persons/:id", controllers.UpdatePerson)
-	router.DELETE("/customers/:id", controllers.DeleteCustomer)
+	router.PUT("/customers/:id", middleware.JwtAuthMiddleware(), controllers.UpdateCustomer)
+	router.DELETE("/customers/:id", middleware.JwtAuthMiddleware(), controllers.DeleteCustomer)
 
 	//Brand
 	router.GET("/brands", controllers.GetAllBrand)
-	router.POST("/brands", controllers.InsertBrand)
-	router.PUT("/brands/:id", controllers.UpdateBrand)
-	router.DELETE("/brands/:id", controllers.DeleteBrand)
+	router.POST("/brands", middleware.JwtAuthMiddleware(), controllers.InsertBrand)
+	router.PUT("/brands/:id", middleware.JwtAuthMiddleware(), controllers.UpdateBrand)
+	router.DELETE("/brands/:id", middleware.JwtAuthMiddleware(), controllers.DeleteBrand)
 
 	//Car
 	router.GET("/cars", controllers.GetAllCar)
-	router.POST("/cars", controllers.InsertCar)
-	router.PUT("/cars/:id", controllers.UpdateCar)
-	router.DELETE("/cars/:id", controllers.DeleteCar)
+	router.POST("/cars", middleware.JwtAuthMiddleware(), controllers.InsertCar)
+	router.PUT("/cars/:id", middleware.JwtAuthMiddleware(), controllers.UpdateCar)
+	router.DELETE("/cars/:id", middleware.JwtAuthMiddleware(), controllers.DeleteCar)
+	router.GET("/cars/:id/car_images", controllers.GetCarImageByCarId)
 
 	//Car Image
-	router.POST("/car_images", controllers.InsertCarImage)
-	router.PUT("/car_images/:id", controllers.UpdateCarImage)
-	router.DELETE("/car_images/:id", controllers.DeleteCarImage)
+	router.POST("/car_images", middleware.JwtAuthMiddleware(), controllers.InsertCarImage)
+	router.PUT("/car_images/:id", middleware.JwtAuthMiddleware(), controllers.UpdateCarImage)
+	router.DELETE("/car_images/:id", middleware.JwtAuthMiddleware(), controllers.DeleteCarImage)
+
+	//Transaction
+	router.GET("/transactions", middleware.JwtAuthMiddleware(), controllers.GetAllTransaction)
+	router.GET("/cars/:id/transactions", middleware.JwtAuthMiddleware(), controllers.GetTransactionByCarId)
+	router.GET("/customers/:id/transactions", middleware.JwtAuthMiddleware(), controllers.GetTransactionByCustomerId)
+	router.POST("/transactions", middleware.JwtAuthMiddleware(), controllers.InsertTransaction)
+	router.PUT("/transactions/:id/proceed", middleware.JwtAuthMiddleware(), controllers.ProceedTransaction)
+	router.PUT("/transactions/:id/finished", middleware.JwtAuthMiddleware(), controllers.FinishTransaction)
+	router.PUT("/transactions/:id/cancelled", middleware.JwtAuthMiddleware(), controllers.CancelTransaction)
+	router.PUT("/transactions/:id/review", middleware.JwtAuthMiddleware(), controllers.InsertReviewTransaction)
+
 	return router
 }
