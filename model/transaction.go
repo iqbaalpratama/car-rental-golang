@@ -9,7 +9,7 @@ type Transaction struct {
 	TotalPrice int       `json:"total_price"`
 	Status     string    `json:"status"`
 	Rating     int       `json:"rating"`
-	Review     int       `json:"review"`
+	Review     string    `json:"review"`
 	CarId      int       `json:"car_id"`
 	CustomerId int       `json:"customer_id"`
 	CreatedAt  time.Time `json:"created_at"`
