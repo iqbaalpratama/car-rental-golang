@@ -25,6 +25,6 @@ type PostTransaction struct {
 }
 
 type PostReviewTransaction struct {
-	Rating int `json:"rating"`
-	Review int `json:"review"`
+	Rating int    `json:"rating"`
+	Review string `json:"review"`
 }

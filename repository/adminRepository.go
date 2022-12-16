@@ -26,24 +26,6 @@ func GetAllAdmin(db *sql.DB) (results []model.Admin, err error) {
 	return
 }
 
-// func GetAdminById(db *sql.DB) (err error, admin model.Admin) {
-// 	sql := "SELECT id, first_name, last_name, email, phone_number, created_at, updated_at FROM admins"
-// 	rows, err := db.Query(sql)
-// 	if err != nil {
-// 		return err, nil
-// 	}
-// 	defer rows.Close()
-// 	for rows.Next() {
-// 		var admin = model.Admin{}
-// 		err := rows.Scan(&admin.ID, &admin.FirstName, &admin.LastName, &admin.Email, &admin.PhoneNumber, &admin.CreatedAt, &admin.UpdatedAt)
-// 		if err != nil {
-// 			return err, nil
-// 		}
-// 		results = append(results, admin)
-// 	}
-// 	return
-// }
-
 func InsertAdmin(db *sql.DB, admin model.PostAdmin) (err error) {
 	sql := "INSERT INTO admins (first_name, last_name, email, password, phone_number, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)"
 	errs := db.QueryRow(sql, admin.FirstName, admin.LastName, admin.Email, admin.Password, admin.PhoneNumber, time.Now().Local(), time.Now().Local())

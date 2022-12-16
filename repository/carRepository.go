@@ -4,6 +4,7 @@ import (
 	"car-rental/model"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 )
 
@@ -71,4 +72,15 @@ func GetCarPrice(db *sql.DB, id int) (int, error) {
 		return 0, errors.New("Car with that ID is not found in database")
 	}
 	return price, nil
+}
+
+func IsCarCanBooked(db *sql.DB, CarId int, dateStart string, dateFinish string) error {
+	var id int
+	sqlStatement := `SELECT id from transactions WHERE car_id = $1 AND (status = $2 OR status = $3) AND ( $4 >= date_start AND $5 <= date_finish )`
+	if err := db.QueryRow(sqlStatement, CarId, "Created", "In Progress", dateStart, dateStart).Scan(&id); err != nil {
+		fmt.Println(id)
+		return nil
+	}
+	fmt.Println(id)
+	return errors.New("Transaction cannot happen because the car is already booked")
 }

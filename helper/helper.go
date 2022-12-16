@@ -57,6 +57,7 @@ func IsUrlValid(imageUrl string) bool {
 }
 
 func IsDateValid(dateStart string, dateFinish string) (bool, int) {
+	currentTime := time.Now().Local()
 	res1 := strings.Split(dateStart, "/")
 	res2 := strings.Split(dateFinish, "/")
 	year1, _ := strconv.Atoi(res1[0])
@@ -67,8 +68,13 @@ func IsDateValid(dateStart string, dateFinish string) (bool, int) {
 	day2, _ := strconv.Atoi(res2[2])
 	t1 := Date(year1, month1, day1)
 	t2 := Date(year2, month2, day2)
+	tnow := Date(currentTime.Year(), int(currentTime.Month()), currentTime.Day())
 	days := t2.Sub(t1).Hours() / 24
 	if days <= 0 {
+		return false, 0
+	}
+	difference := t1.Sub(tnow).Hours() / 24
+	if difference <= 0 {
 		return false, 0
 	}
 	return true, int(days)

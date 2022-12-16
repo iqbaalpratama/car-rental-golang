@@ -137,6 +137,7 @@ func InsertTransaction(c *gin.Context) {
 		})
 		return
 	}
+
 	var transaction model.PostTransaction
 	err = c.ShouldBindJSON(&transaction)
 	if err != nil {
@@ -145,17 +146,17 @@ func InsertTransaction(c *gin.Context) {
 		})
 		return
 	}
-
 	if dataUser.Role == "Customer" && dataUser.ID != transaction.CustomerId {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"error": "You are unauthorized to access this resource",
 		})
 		return
 	}
+
 	//format date yyyy/mm/dd
 	isValid, differenceDate := helper.IsDateValid(transaction.DateStart, transaction.DateFinish)
 	if !isValid {
-		errorValidation = append(errorValidation, "Date start and date finish not valid, it should have difference of positive")
+		errorValidation = append(errorValidation, "Date start and date finish not valid, it should have difference of positive and date start should after date now")
 	}
 	if len(errorValidation) > 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -164,6 +165,15 @@ func InsertTransaction(c *gin.Context) {
 		})
 		return
 	}
+
+	err = repository.IsCarCanBooked(database.DbConnection, transaction.CarId, transaction.DateStart, transaction.DateFinish)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
 	rentPrice, err := repository.GetCarPrice(database.DbConnection, transaction.CarId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -172,6 +182,7 @@ func InsertTransaction(c *gin.Context) {
 		return
 	}
 	transaction.TotalPrice = rentPrice * differenceDate
+
 	err = repository.InsertTransaction(database.DbConnection, transaction)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -179,6 +190,7 @@ func InsertTransaction(c *gin.Context) {
 		})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"result": "Success Insert Transaction",
 	})
@@ -215,6 +227,7 @@ func InsertReviewTransaction(c *gin.Context) {
 		})
 		return
 	}
+
 	if !helper.IsRatingValid(review.Rating) {
 		errorValidation = append(errorValidation, "Rating is not valid, it should between 1 - 10")
 	}
@@ -225,6 +238,7 @@ func InsertReviewTransaction(c *gin.Context) {
 		})
 		return
 	}
+
 	id, _ := strconv.Atoi(c.Param("id"))
 	status, err = repository.GetTransactionStatus(database.DbConnection, id)
 	if err != nil {
@@ -267,6 +281,25 @@ func InsertReviewTransaction(c *gin.Context) {
 }
 
 func ProceedTransaction(c *gin.Context) {
+	dataUser, errToken := helper.ExtractTokenData(c)
+	if errToken != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": errToken.Error(),
+		})
+		return
+	}
+	if dataUser == (model.Token{}) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "Cannot extract data token",
+		})
+		return
+	}
+	if dataUser.Role == "Customer" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "You are unauthorized to access this resource, this resource for admin user",
+		})
+		return
+	}
 	id, _ := strconv.Atoi(c.Param("id"))
 	status, err := repository.GetTransactionStatus(database.DbConnection, id)
 	if err != nil {
@@ -294,6 +327,25 @@ func ProceedTransaction(c *gin.Context) {
 }
 
 func CancelTransaction(c *gin.Context) {
+	dataUser, errToken := helper.ExtractTokenData(c)
+	if errToken != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": errToken.Error(),
+		})
+		return
+	}
+	if dataUser == (model.Token{}) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "Cannot extract data token",
+		})
+		return
+	}
+	if dataUser.Role == "Customer" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "You are unauthorized to access this resource, this resource for admin user",
+		})
+		return
+	}
 	id, _ := strconv.Atoi(c.Param("id"))
 	status, err := repository.GetTransactionStatus(database.DbConnection, id)
 	if err != nil {
@@ -321,6 +373,26 @@ func CancelTransaction(c *gin.Context) {
 }
 
 func FinishTransaction(c *gin.Context) {
+	dataUser, errToken := helper.ExtractTokenData(c)
+	if errToken != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": errToken.Error(),
+		})
+		return
+	}
+	if dataUser == (model.Token{}) {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "Cannot extract data token",
+		})
+		return
+	}
+	if dataUser.Role == "Customer" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "You are unauthorized to access this resource, this resource for admin user",
+		})
+		return
+	}
+
 	id, _ := strconv.Atoi(c.Param("id"))
 	status, err := repository.GetTransactionStatus(database.DbConnection, id)
 	if err != nil {
@@ -331,11 +403,11 @@ func FinishTransaction(c *gin.Context) {
 	}
 	if status != "In Progress" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "This transactions can't be finish because status transaction is not created",
+			"error": "This transactions can't be finish because status transaction is not In Progress",
 		})
 		return
 	}
-	err = repository.CancelTransaction(database.DbConnection, id)
+	err = repository.FinishTransaction(database.DbConnection, id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
