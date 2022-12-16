@@ -8,7 +8,7 @@ import (
 )
 
 func GetAllTransaction(db *sql.DB) (err error, results []model.Transaction) {
-	sql := "SELECT id, date_start, date_finish, total_price, status, car_id, customer_id, created_at, updated_at FROM transactions"
+	sql := "SELECT id, date_start, date_finish, total_price, status, car_id, customer_id, rating, review, created_at, updated_at FROM transactions"
 	rows, err := db.Query(sql)
 	if err != nil {
 		return err, nil
@@ -16,7 +16,7 @@ func GetAllTransaction(db *sql.DB) (err error, results []model.Transaction) {
 	defer rows.Close()
 	for rows.Next() {
 		var transaction = model.Transaction{}
-		err := rows.Scan(&transaction.ID, &transaction.DateStart, &transaction.DateFinish, &transaction.TotalPrice, &transaction.Status, &transaction.CarId, &transaction.CustomerId, &transaction.CreatedAt, &transaction.UpdatedAt)
+		err := rows.Scan(&transaction.ID, &transaction.DateStart, &transaction.DateFinish, &transaction.TotalPrice, &transaction.Status, &transaction.CarId, &transaction.CustomerId, &transaction.Rating, &transaction.Review, &transaction.CreatedAt, &transaction.UpdatedAt)
 		if err != nil {
 			return err, nil
 		}
@@ -26,7 +26,7 @@ func GetAllTransaction(db *sql.DB) (err error, results []model.Transaction) {
 }
 
 func GetTransactionByCarId(db *sql.DB, carId int) (err error, results []model.Transaction) {
-	sql := "SELECT id, date_start, date_finish, total_price, status, car_id, customer_id, created_at, updated_at FROM transactions WHERE car_id = $1"
+	sql := "SELECT id, date_start, date_finish, total_price, status, car_id, customer_id, rating, review, created_at, updated_at FROM transactions WHERE car_id = $1"
 	rows, err := db.Query(sql, carId)
 	if err != nil {
 		return err, nil
@@ -34,7 +34,7 @@ func GetTransactionByCarId(db *sql.DB, carId int) (err error, results []model.Tr
 	defer rows.Close()
 	for rows.Next() {
 		var transaction = model.Transaction{}
-		err := rows.Scan(&transaction.ID, &transaction.DateStart, &transaction.DateFinish, &transaction.TotalPrice, &transaction.Status, &transaction.CarId, &transaction.CustomerId, &transaction.CreatedAt, &transaction.UpdatedAt)
+		err := rows.Scan(&transaction.ID, &transaction.DateStart, &transaction.DateFinish, &transaction.TotalPrice, &transaction.Status, &transaction.CarId, &transaction.CustomerId, &transaction.Rating, &transaction.Review, &transaction.CreatedAt, &transaction.UpdatedAt)
 		if err != nil {
 			return err, nil
 		}
@@ -44,7 +44,7 @@ func GetTransactionByCarId(db *sql.DB, carId int) (err error, results []model.Tr
 }
 
 func GetTransactionByCustomerId(db *sql.DB, customerId int) (err error, results []model.Transaction) {
-	sql := "SELECT id, date_start, date_finish, total_price, status, car_id, customer_id, created_at, updated_at FROM transactions WHERE customer_id = $1"
+	sql := "SELECT id, date_start, date_finish, total_price, status, car_id, customer_id, rating, review, created_at, updated_at FROM transactions WHERE customer_id = $1"
 	rows, err := db.Query(sql, customerId)
 	if err != nil {
 		return err, nil
@@ -52,7 +52,7 @@ func GetTransactionByCustomerId(db *sql.DB, customerId int) (err error, results 
 	defer rows.Close()
 	for rows.Next() {
 		var transaction = model.Transaction{}
-		err := rows.Scan(&transaction.ID, &transaction.DateStart, &transaction.DateFinish, &transaction.TotalPrice, &transaction.Status, &transaction.CarId, &transaction.CustomerId, &transaction.CreatedAt, &transaction.UpdatedAt)
+		err := rows.Scan(&transaction.ID, &transaction.DateStart, &transaction.DateFinish, &transaction.TotalPrice, &transaction.Status, &transaction.CarId, &transaction.CustomerId, &transaction.Rating, &transaction.Review, &transaction.CreatedAt, &transaction.UpdatedAt)
 		if err != nil {
 			return err, nil
 		}
