@@ -21,20 +21,20 @@ func Route() *gin.Engine {
 	router.DELETE("/admins/:id", middleware.JwtAuthMiddleware(), controllers.DeleteAdmin)
 
 	//Customer
-	router.GET("/customers", middleware.JwtAuthMiddleware(), controllers.GetAllCustomer)
 	router.POST("/customers", controllers.InsertCustomer)
+	router.GET("/customers", middleware.JwtAuthMiddleware(), controllers.GetAllCustomer)
 	router.PUT("/customers/:id", middleware.JwtAuthMiddleware(), controllers.UpdateCustomer)
 	router.DELETE("/customers/:id", middleware.JwtAuthMiddleware(), controllers.DeleteCustomer)
 
 	//Brand
-	router.GET("/brands", controllers.GetAllBrand)
 	router.POST("/brands", middleware.JwtAuthMiddleware(), controllers.InsertBrand)
+	router.GET("/brands", controllers.GetAllBrand)
 	router.PUT("/brands/:id", middleware.JwtAuthMiddleware(), controllers.UpdateBrand)
 	router.DELETE("/brands/:id", middleware.JwtAuthMiddleware(), controllers.DeleteBrand)
 
 	//Car
-	router.GET("/cars", controllers.GetAllCar)
 	router.POST("/cars", middleware.JwtAuthMiddleware(), controllers.InsertCar)
+	router.GET("/cars", controllers.GetAllCar)
 	router.PUT("/cars/:id", middleware.JwtAuthMiddleware(), controllers.UpdateCar)
 	router.DELETE("/cars/:id", middleware.JwtAuthMiddleware(), controllers.DeleteCar)
 	router.GET("/cars/:id/car_images", controllers.GetCarImageByCarId)
@@ -45,10 +45,10 @@ func Route() *gin.Engine {
 	router.DELETE("/car_images/:id", middleware.JwtAuthMiddleware(), controllers.DeleteCarImage)
 
 	//Transaction
+	router.POST("/transactions", middleware.JwtAuthMiddleware(), controllers.InsertTransaction)
 	router.GET("/transactions", middleware.JwtAuthMiddleware(), controllers.GetAllTransaction)
 	router.GET("/cars/:id/transactions", middleware.JwtAuthMiddleware(), controllers.GetTransactionByCarId)
 	router.GET("/customers/:id/transactions", middleware.JwtAuthMiddleware(), controllers.GetTransactionByCustomerId)
-	router.POST("/transactions", middleware.JwtAuthMiddleware(), controllers.InsertTransaction)
 	router.PUT("/transactions/:id/proceed", middleware.JwtAuthMiddleware(), controllers.ProceedTransaction)
 	router.PUT("/transactions/:id/finished", middleware.JwtAuthMiddleware(), controllers.FinishTransaction)
 	router.PUT("/transactions/:id/cancelled", middleware.JwtAuthMiddleware(), controllers.CancelTransaction)
