@@ -33,7 +33,7 @@ func InsertCar(db *sql.DB, car model.PostPutCar) (err error) {
 }
 
 func UpdateCar(db *sql.DB, car model.PostPutCar, carId int) (err error) {
-	sql := "UPDATE car SET car_number = $1, car_model = $2, car_year = $3, rent_price = $4, brand_id = $5, updated_at = $6 WHERE id = $7;"
+	sql := "UPDATE cars SET car_number = $1, car_model = $2, car_year = $3, rent_price = $4, brand_id = $5, updated_at = $6 WHERE id = $7;"
 	res, err := db.Exec(sql, car.CarNumber, car.CarModel, car.CarYear, car.RentPrice, car.BrandId, time.Now().Local(), carId)
 	if err != nil {
 		return err
